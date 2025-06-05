@@ -1,15 +1,21 @@
+#!/usr/bin/env python3
 import math
-from cereal import car
+from opendbc.car.structs import CarParams
 from openpilot.common.realtime import DT_CTRL
-from openpilot.selfdrive.car import get_safety_config
-from openpilot.selfdrive.car.interfaces import CarInterfaceBase
+from opendbc.car import get_safety_config
+from opendbc.car.interfaces import CarInterfaceBase
+from opendbc.car.drone.carstate import CarState
+from opendbc.car.drone.carcontroller import CarController
 
 class CarInterface(CarInterfaceBase):
+  CarState = CarState
+  CarController = CarController
+
   @staticmethod
-  def _get_params(ret, candidate, fingerprint, car_fw, experimental_long, docs):
+  def _get_params(ret: CarParams, candidate, fingerprint, car_fw, experimental_long, is_release, docs):
     ret.notCar = True
     ret.carName = "drone"
-    ret.safetyConfigs = [get_safety_config(car.CarParams.SafetyModel.drone)]
+    ret.safetyConfigs = [get_safety_config(CarParams.SafetyModel.drone)]
 
     ret.minSteerSpeed = -math.inf
     ret.maxLateralAccel = math.inf  # TODO: set to a reasonable value
@@ -22,21 +28,8 @@ class CarInterface(CarInterfaceBase):
 
     ret.radarUnavailable = True
     ret.openpilotLongitudinalControl = True
-    ret.steerControlType = car.CarParams.SteerControlType.angle
+    ret.steerControlType = CarParams.SteerControlType.angle
     ret.vEgoStarting = 0.1
     ret.vEgoStopping = 0.1
-
-    return ret
-
-  def _update(self, c):
-    ret = self.CS.update(self.cp)
-
-    # wait for everything to init first
-    if self.frame > int(5. / DT_CTRL):
-      # body always wants to enable
-      ret.init('events', 1)
-      ret.events[0].name = car.CarEvent.EventName.pcmEnable
-      ret.events[0].enable = True
-    self.frame += 1
 
     return ret

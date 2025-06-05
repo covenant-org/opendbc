@@ -1,16 +1,16 @@
 import math
 
 import os
-from openpilot.common.realtime import DT_CTRL
+from opendbc.car import DT_CTRL
 from opendbc.can.packer import CANPacker
-from openpilot.selfdrive.car.drone import bodycan
-from openpilot.selfdrive.car.interfaces import CarControllerBase
-from openpilot.selfdrive.controls.lib.pid import PIDController
+from opendbc.car.drone import bodycan
+from opendbc.car.interfaces import CarControllerBase
+from opendbc.car.common.pid import PIDController
 
 MAX_ANGLE=45
 
 class CarController(CarControllerBase):
-  def __init__(self, dbc_name, CP, VM):
+  def __init__(self, dbc_name, CP):
     self.frame = 0
     self.packer = CANPacker(dbc_name)
     self.height_target = float(os.getenv("DRONE_HEIGHT", 1.0))

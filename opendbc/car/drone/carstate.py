@@ -1,13 +1,14 @@
-from cereal import car
+from opendbc.car import Bus, structs
 from opendbc.can.parser import CANParser
-from openpilot.selfdrive.car.interfaces import CarStateBase
-from openpilot.selfdrive.car.drone.values import DBC
+from opendbc.car.interfaces import CarStateBase
+from opendbc.car.drone.values import DBC
 
 STARTUP_TICKS = 100
 
 class CarState(CarStateBase):
-  def update(self, cp):
-    ret = car.CarState.new_message()
+  def update(self, can_parsers):
+    cp = can_parsers[Bus.main]
+    ret = structs.CarState()
 
     ret.vEgoRaw = cp.vl['DRONE_DATA']['SPEED']
     ret.cruiseState.speed = cp.vl['DRONE_DATA']['SPEED']
@@ -23,7 +24,7 @@ class CarState(CarStateBase):
     ret.steerFaultPermanent = False
 
     # irrelevant for non-car
-    ret.gearShifter = car.CarState.GearShifter.drive
+    ret.gearShifter = structs.CarState.GearShifter.drive
     ret.cruiseState.enabled = True
     ret.cruiseState.available = True
     ret.canValid = True
@@ -37,4 +38,4 @@ class CarState(CarStateBase):
       ("DRONE_DATA", 100),
       ("DRONE_MODE", 100),
     ]
-    return CANParser(DBC[CP.carFingerprint]["pt"], messages, 0)
+    return {Bus.main: CANParser(DBC[CP.carFingerprint][Bus.main], messages, 0)}

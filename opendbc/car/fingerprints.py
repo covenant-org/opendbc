@@ -11,6 +11,7 @@ from opendbc.car.nissan.values import CAR as NISSAN
 from opendbc.car.subaru.values import CAR as SUBARU
 from opendbc.car.toyota.values import CAR as TOYOTA
 from opendbc.car.volkswagen.values import CAR as VW
+from opendbc.car.drone.values import CAR as DRONE
 
 FW_VERSIONS = get_interface_attr('FW_VERSIONS', combine_brands=True, ignore_none=True)
 _FINGERPRINTS = get_interface_attr('FINGERPRINTS', combine_brands=True, ignore_none=True)
@@ -123,6 +124,7 @@ MIGRATION = {
   "CADILLAC ESCALADE ESV PLATINUM 2019": GM.CADILLAC_ESCALADE_ESV_2019,
 
   # Removal of platform_str, see https://github.com/commaai/openpilot/pull/31868/
+  "DRONE": DRONE.DRONE,
   "COMMA BODY": BODY.COMMA_BODY,
   "CHRYSLER PACIFICA HYBRID 2017": CHRYSLER.CHRYSLER_PACIFICA_2018_HYBRID,
   "CHRYSLER_PACIFICA_2017_HYBRID": CHRYSLER.CHRYSLER_PACIFICA_2018_HYBRID,
