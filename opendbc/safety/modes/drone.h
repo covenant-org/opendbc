@@ -1,8 +1,6 @@
-const CanMsg DRONE_TX_MSGS[] = {{0x265, 0, 6}, {0x266, 0, 8}, {0x267, 0, 2}};
+#pragma once
 
-RxCheck drone_rx_checks[] = {
-//  {.msg = {{0x201, 0, 8, .check_checksum = false, .max_counter = 0U, .frequency = 100U}, { 0 }, { 0 }}},
-};
+#include "opendbc/safety/safety_declarations.h"
 
 static void drone_rx_hook(const CANPacket_t *to_push) {
   // body is never at standstill
@@ -19,13 +17,17 @@ static bool drone_tx_hook(const CANPacket_t *to_send) {
 }
 
 static safety_config drone_init(uint16_t param) {
+  static const CanMsg DRONE_TX_MSGS[] = {{0x265, 0, 6, .check_relay = false}, {0x266, 0, 8, .check_relay = false}, {0x267, 0, 2, .check_relay = false}};
+  static RxCheck drone_rx_checks[] = {};
+
   UNUSED(param);
-  return BUILD_SAFETY_CFG(drone_rx_checks, DRONE_TX_MSGS);
+  safety_config ret = BUILD_SAFETY_CFG(drone_rx_checks, DRONE_TX_MSGS);
+  ret.disable_forwarding = true;
+  return ret;
 }
 
 const safety_hooks drone_hooks = {
   .init = drone_init,
   .rx = drone_rx_hook,
   .tx = drone_tx_hook,
-  .fwd = default_fwd_hook,
-};
+  };

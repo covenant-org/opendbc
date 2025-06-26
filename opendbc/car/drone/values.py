@@ -1,9 +1,9 @@
-from cereal import car
-from openpilot.selfdrive.car import CarSpecs, PlatformConfig, Platforms, dbc_dict
-from openpilot.selfdrive.car.docs_definitions import CarDocs
-from openpilot.selfdrive.car.fw_query_definitions import FwQueryConfig, Request, StdQueries
+from opendbc.car import CarSpecs, PlatformConfig, Platforms, Bus
+from opendbc.car.structs import CarParams
+from opendbc.car.docs_definitions import CarDocs
+from opendbc.car.fw_query_definitions import FwQueryConfig, Request, StdQueries
 
-Ecu = car.CarParams.Ecu
+Ecu = CarParams.Ecu
 
 class CarControllerParams:
   ANGLE_DELTA_BP = [0., 5., 15.]
@@ -20,7 +20,7 @@ class CAR(Platforms):
   DRONE = PlatformConfig(
     [CarDocs("Nuclea drone", package="All")],
     CarSpecs(mass=4, wheelbase=0.406, steerRatio=0.5, centerToFrontRatio=0.44),
-    dbc_dict('drone', None),
+    {Bus.main: 'drone'},
   )
 
 
